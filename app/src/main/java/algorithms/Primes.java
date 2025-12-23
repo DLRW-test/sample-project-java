@@ -46,7 +46,7 @@ public class Primes {
     Vector<Integer> ret = new Vector<Integer>();
 
     for (int i = 2; i * i <= n; i++) { // Optimized loop condition
-      while (n % i == 0 && IsPrime(i)) { // Optimized to handle repeated factors
+      while (n % i == 0) { // Optimized to handle repeated factors
         ret.add(i);
         n /= i; // Reduce n to avoid redundant checks.
       }
