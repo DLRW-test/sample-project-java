@@ -4,17 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 import org.junit.jupiter.api.Test;
 
 /**
  * Comprehensive unit tests for GenVector.generateVector() method.
  * 
- * Note: The generateVector() method creates a new Random instance on each call,
- * which has performance implications but does not affect correctness.
- * This is a known issue documented for future optimization.
+ * The generateVector() method has been optimized to use ThreadLocalRandom
+ * for better performance and thread-safety.
  */
 public class GenVectorTest {
 
@@ -23,14 +22,14 @@ public class GenVectorTest {
   @Test
   public void testGenerateVector_EmptyVector() {
     // Test with n=0 should return an empty vector
-    Vector<Integer> result = GenVector.generateVector(0, 10);
+    ArrayList<Integer> result = GenVector.generateVector(0, 10);
     assertEquals(0, result.size(), "Vector with n=0 should be empty");
   }
 
   @Test
   public void testGenerateVector_SingleElement() {
     // Test with n=1 should return a vector with exactly one element
-    Vector<Integer> result = GenVector.generateVector(1, 10);
+    ArrayList<Integer> result = GenVector.generateVector(1, 10);
     assertEquals(1, result.size(), "Vector with n=1 should have size 1");
     assertTrue(result.get(0) >= 0 && result.get(0) < 10, 
         "Single element should be in valid range [0, 10)");
@@ -41,7 +40,7 @@ public class GenVectorTest {
     // Test with large n (100+ elements) to verify scalability
     int n = 150;
     int m = 50;
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     assertEquals(n, result.size(), "Vector should have exactly " + n + " elements");
     
     // Verify all elements are in valid range
@@ -60,7 +59,7 @@ public class GenVectorTest {
     int[] testSizes = {0, 1, 5, 10, 25, 50, 100, 200};
     
     for (int n : testSizes) {
-      Vector<Integer> result = GenVector.generateVector(n, 100);
+      ArrayList<Integer> result = GenVector.generateVector(n, 100);
       assertEquals(n, result.size(), 
           "Vector length should match parameter n=" + n);
     }
@@ -73,7 +72,7 @@ public class GenVectorTest {
     // Test with small m value (m=10)
     int n = 50;
     int m = 10;
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     
     for (int i = 0; i < result.size(); i++) {
       int value = result.get(i);
@@ -87,7 +86,7 @@ public class GenVectorTest {
     // Test with medium m value (m=100)
     int n = 50;
     int m = 100;
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     
     for (int i = 0; i < result.size(); i++) {
       int value = result.get(i);
@@ -101,7 +100,7 @@ public class GenVectorTest {
     // Test with large m value (m=1000)
     int n = 50;
     int m = 1000;
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     
     for (int i = 0; i < result.size(); i++) {
       int value = result.get(i);
@@ -115,7 +114,7 @@ public class GenVectorTest {
     // Test with very large m value
     int n = 30;
     int m = 10000;
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     
     for (int i = 0; i < result.size(); i++) {
       int value = result.get(i);
@@ -131,7 +130,7 @@ public class GenVectorTest {
     // When m=1, all elements should be 0 (only valid value in [0, 1))
     int n = 20;
     int m = 1;
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     
     assertEquals(n, result.size(), "Vector should have correct size");
     for (int i = 0; i < result.size(); i++) {
@@ -146,7 +145,7 @@ public class GenVectorTest {
     int[] mValues = {1, 10, 100, 1000};
     
     for (int m : mValues) {
-      Vector<Integer> result = GenVector.generateVector(0, m);
+      ArrayList<Integer> result = GenVector.generateVector(0, m);
       assertEquals(0, result.size(), 
           "Empty vector (n=0) should work with m=" + m);
     }
@@ -161,9 +160,9 @@ public class GenVectorTest {
     int n = 20;
     int m = 10;
     
-    Vector<Integer> result1 = GenVector.generateVector(n, m);
-    Vector<Integer> result2 = GenVector.generateVector(n, m);
-    Vector<Integer> result3 = GenVector.generateVector(n, m);
+    ArrayList<Integer> result1 = GenVector.generateVector(n, m);
+    ArrayList<Integer> result2 = GenVector.generateVector(n, m);
+    ArrayList<Integer> result3 = GenVector.generateVector(n, m);
     
     // Check that at least one of the vectors differs from the others
     // It's extremely unlikely (but theoretically possible) that all three
@@ -183,7 +182,7 @@ public class GenVectorTest {
     int n = 50;
     int m = 20;
     
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     
     // Collect unique values
     Set<Integer> uniqueValues = new HashSet<>(result);
@@ -203,7 +202,7 @@ public class GenVectorTest {
     int n = 200;
     int m = 10;
     
-    Vector<Integer> result = GenVector.generateVector(n, m);
+    ArrayList<Integer> result = GenVector.generateVector(n, m);
     
     // Count unique values
     Set<Integer> uniqueValues = new HashSet<>(result);
@@ -218,9 +217,9 @@ public class GenVectorTest {
   // ==================== Helper Methods ====================
 
   /**
-   * Helper method to check if two vectors contain the same elements in the same order.
+   * Helper method to check if two ArrayLists contain the same elements in the same order.
    */
-  private boolean vectorsEqual(Vector<Integer> v1, Vector<Integer> v2) {
+  private boolean vectorsEqual(ArrayList<Integer> v1, ArrayList<Integer> v2) {
     if (v1.size() != v2.size()) {
       return false;
     }
