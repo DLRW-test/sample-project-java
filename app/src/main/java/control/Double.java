@@ -1,5 +1,7 @@
 package control;
 
+import java.util.HashMap;
+
 public class Double {
   /**
    * Sums all values squared from 0 to n
@@ -8,15 +10,9 @@ public class Double {
    * @return The sum of the first n natural numbers squared.
    */
   public static int sumSquare(int n) {
-    int sum = 0;
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        if (i == j) {
-          sum = sum + i * j;
-        }
-      }
-    }
-    return sum;
+    // Formula for sum of squares: 0² + 1² + 2² + ... + (n-1)²
+    // = (n-1) * n * (2*n-1) / 6
+    return (n - 1) * n * (2 * n - 1) / 6;
   }
 
   /**
@@ -26,13 +22,9 @@ public class Double {
    * @return The sum of the first n triangular numbers.
    */
   public static int sumTriangle(int n) {
-    int sum = 0;
-    for (int i = 0; i < n + 1; i++) {
-      for (int j = 0; j < i; j++) {
-        sum = sum + j;
-      }
-    }
-    return sum;
+    // Formula for sum of triangular numbers: T(0) + T(1) + ... + T(n)
+    // = (n-1) * n * (n+1) / 6
+    return (n - 1) * n * (n + 1) / 6;
   }
 
   /**
@@ -44,19 +36,23 @@ public class Double {
    * @return The number of pairs in the array.
    */
   public static int countPairs(int[] arr) {
-    int count = 0;
+    // Optimized O(n) solution using HashMap to track frequencies
+    HashMap<Integer, Integer> frequencyMap = new HashMap<>();
+    
+    // Single pass to count frequencies
     for (int i = 0; i < arr.length; i++) {
-      int nDuplicates = 0;
-      for (int j = 0; j < arr.length; j++) {
-        if (arr[i] == arr[j]) {
-          nDuplicates++;
-        }
-      }
-      if (nDuplicates == 2) {
+      frequencyMap.put(arr[i], frequencyMap.getOrDefault(arr[i], 0) + 1);
+    }
+    
+    // Count elements that appear exactly twice
+    int count = 0;
+    for (int freq : frequencyMap.values()) {
+      if (freq == 2) {
         count++;
       }
     }
-    return count / 2;
+    
+    return count;
   }
 
   /**
@@ -68,12 +64,11 @@ public class Double {
    *         equal.
    */
   public static int countDuplicates(int[] arr0, int[] arr1) {
+    // Optimized O(n) single-pass algorithm
     int count = 0;
     for (int i = 0; i < arr0.length; i++) {
-      for (int j = 0; j < arr1.length; j++) {
-        if (i == j && arr0[i] == arr1[j]) {
-          count++;
-        }
+      if (arr0[i] == arr1[i]) {
+        count++;
       }
     }
     return count;
